@@ -26,8 +26,8 @@ const ProductCard = ({product}:IProps) => {
           <Image ImageUrl={category.imageUrl} ImageName={category.name} ImageClass={"rounded-full w-12 h-12 "}/>
         </div>
         <div className="flex items-center justify-between gap-3 mt-3">
-          <Button ButtonClass={"bg-blue-600"} onClick={()=>console.log('click')}>EDIT</Button>
-          <Button ButtonClass={"bg-red-600"} onClick={()=>console.log('deleted')}>DELETE</Button>
+          <Button ButtonClass={"bg-blue-600"} >EDIT</Button>
+          <Button ButtonClass={"bg-red-600"} >DELETE</Button>
         </div>
     </div>
   )
