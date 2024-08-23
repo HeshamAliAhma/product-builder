@@ -1,10 +1,10 @@
 export const defaultProduct = {
-    id: 0,
+    id: '',
     title: '',
     description: '',
     imageUrl: '',
     price: '',
-    color: [],
+    colors: [],
     category: {
       name: '',
       imageUrl: ''
