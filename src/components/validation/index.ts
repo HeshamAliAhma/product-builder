@@ -1,16 +1,16 @@
+
 interface IProduct {
     title: string;
     description: string;
     imageUrl: string;
     price: string;
 }
-
 export const productValidation = (product: IProduct) => {
     const errors: IProduct = {
         title:'',
         description:"",
         imageUrl:"",
-        price:""
+        price:"",
     };
 
     const imageValid = /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(product.imageUrl);
@@ -30,6 +30,7 @@ export const productValidation = (product: IProduct) => {
     if (isNaN(priceNumber) || priceNumber <= 0 || !product.price.trim()) {
         errors.price = 'Product Price must be a positive number';
     }
+
 
     return errors;
 };

@@ -6,11 +6,26 @@ import {trimText} from './utils/functions'
 
 interface IProps {
   product:IProduct,
+  setProductToEdit:(product:IProduct) => void,
+  openToEdit:() => void
+  setProductToEditIndex:(index:number) => void
+  index:number,
 }
 
-const ProductCard = ({product}:IProps) => {
+const ProductCard = ({product,setProductToEdit,openToEdit,setProductToEditIndex,index}:IProps) => {
   const {title, description,price,imageUrl,colors,category} = product
+
+  // ------------- Render Colors ---------------
   const RenderColorsList = colors.map(color => <Colors colors={color}/>)
+
+  // ------------ Handler Edit --------------- 
+  // event: MouseEvent<HTMLButtonElement, MouseEvent>
+  const HandlerEdit = (): void => {
+    setProductToEdit(product)
+    openToEdit();
+    setProductToEditIndex(index);
+  }
+
   return (
     <div className="p-2 bg-white rounded-md">
         <div className="max-w-md h-[20rem]">
@@ -26,7 +41,7 @@ const ProductCard = ({product}:IProps) => {
           <Image ImageUrl={category.imageUrl} ImageName={category.name} ImageClass={"rounded-full w-10 h-10 "}/>
         </div>
         <div className="flex items-center justify-between gap-3 mt-3">
-          <Button ButtonClass={"bg-blue-600"} >EDIT</Button>
+          <Button ButtonClass={"bg-blue-600"} onClick={HandlerEdit}>EDIT</Button>
           <Button ButtonClass={"bg-red-600"} >DELETE</Button>
         </div>
     </div>
