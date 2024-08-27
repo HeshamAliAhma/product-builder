@@ -13,6 +13,7 @@ import Colors from "./components/ui/Colors"
 import { v4 as uuidv4 } from 'uuid'
 import Select from "./components/ui/Select"
 import { TProductName } from "./components/type"
+import toast, { Toaster } from 'react-hot-toast';
 
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
   const [tempColor, setTempColor] = useState<string[]>([])
   const [selected, setSelected] = useState(Categorylist[0])
 
+  const [isOpenToRemove, setIsOpenToRemove] = useState(false)
+
   // ---------- Handler ----------
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)
@@ -38,6 +41,10 @@ function App() {
   }
   const closeToEdit = () => setIsOpenToEdit(false)
 
+
+
+  const closeToRemove = () => setIsOpenToRemove(false)
+
   const Handler = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target
     setProduct({
@@ -49,6 +56,7 @@ function App() {
       [name]: ""
     })
   }
+  
   const HandlerEdit = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target
     setProductToEdit({
@@ -66,7 +74,9 @@ function App() {
     setIsOpen(false)
     setIsOpenToEdit(false)
   }
-
+  const cancelToRemove = () => {
+    setIsOpenToRemove(false)
+  }
   const onsubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -79,7 +89,16 @@ function App() {
       setErrors(errors);
       return;
     }
-    console.log('Send Data To Server');
+    toast('The product has been Created', {
+      duration: 4000,
+      position: 'top-center',
+      icon: '👏',
+      style: {
+        backgroundColor: 'green',
+        color: 'white',
+      },
+    });
+
     setProducts(prev => [{ ...product, id: uuidv4(), colors: tempColor, category: selected }, ...prev])
     setProduct(defaultProduct)
     setTempColor([])
@@ -95,31 +114,56 @@ function App() {
       setErrors(errors);
       return;
     }
-    console.log('Send Data To Server');
+
+    toast('The product has been Edited', {
+      duration: 4000,
+      position: 'top-center',
+      icon: '👏',
+      style: {
+        backgroundColor: 'black',
+        color: 'white',
+      },
+    });
 
 
 
 
     const updateProducts = [...products];
-    updateProducts[productToEditIndex] = { ...productToEdit, colors: tempColor.concat(productToEdit.colors)};
+    updateProducts[productToEditIndex] = { ...productToEdit, colors: tempColor.concat(productToEdit.colors) };
     setProducts(updateProducts);
-    
+
 
 
     setProductToEdit(defaultProduct)
     setTempColor([])
     closeToEdit()
   }
+
+  const removeHandler = () => {
+    const removeProducts = products.filter((product) => product.id !== productToEdit.id);
+    setProducts(removeProducts);
+    setIsOpenToRemove(false)
+    toast('The product has been removed', {
+      duration: 4000,
+      position: 'top-center',
+      icon: '👏',
+      style: {
+        backgroundColor:'red',
+        color: 'white',
+      },
+    });
+  }
+
   // ------------ Render ------------
-  const RenderProductList = products.map((product, index) => 
-       <ProductCard
-        key={product.id}
-        product={product} 
-        setProductToEdit={setProductToEdit} 
-        openToEdit={() => openToEdit(product, index)} 
-        setProductToEditIndex={setProductToEditIndex} 
-        index={index} />
-    )
+  const RenderProductList = products.map((product, index) =>
+    <ProductCard
+      key={product.id}
+      product={product}
+      setProductToEdit={setProductToEdit}
+      openToEdit={() => openToEdit(product, index)}
+      setProductToEditIndex={setProductToEditIndex}
+      index={index} isOpenToRemove={setIsOpenToRemove} />
+  )
 
   const RenderFormInputList = formInputList.map((input) => {
     return (
@@ -130,6 +174,7 @@ function App() {
       </div>
     )
   })
+
   const RenderColorsList = colorsList.map((color) => <Colors key={color} colors={color} onClick={() => {
     if (tempColor.includes(color)) {
       setTempColor(prev => prev.filter(item => item !== color))
@@ -141,6 +186,7 @@ function App() {
     }
     setTempColor((prev) => [...prev, color])
   }} />)
+
   const RenderFormEditWithErrorMsg = (id: string, title: string, name: TProductName, label: string) => {
     return (
       <div className="flex flex-col mb-1">
@@ -151,17 +197,18 @@ function App() {
     )
 
   }
-  console.log("الألوان المُختارة:", tempColor, "ألوان التعديل:", productToEdit.colors);
+
+
   return (
     <main className="relative">
       <div className="container">
-      <div className={`${isOpen || isOpenToEdit ? "bg-gray-700 opacity-60 absolute top-0 left-0 w-full h-full" : ""}`}></div>
-        <Button ButtonClass={"bg-blue-600"} onClick={open}>Add</Button>
+        {/* <div className={`${isOpen || isOpenToEdit ? "transition-all backdrop-blur-sm absolute top-0 left-0 w-full h-full" : ""}`}></div> */}
+        <Button ButtonClass={"bg-blue-600"} onClick={open} textColor={"text-white"}>Add</Button>
         <div className="rounded-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-4 p-2 mt-2">
           {RenderProductList}
         </div>
 
-        <MyModal isOpen={isOpen} close={close} title="this is the product">
+        <MyModal isOpen={isOpen} close={close} title="Add The Product">
           <form action="" onSubmit={onsubmitHandler}>
             {RenderFormInputList}
             <Select selected={selected} setSelected={setSelected} />
@@ -170,8 +217,8 @@ function App() {
               {tempColor.map(color => <span style={{ backgroundColor: color }} key={color} className="w-fit px-2 py-1 text-white rounded-md font-bold">{color}</span>)}
             </div>
             <div className="flex items-center gap-2 mt-6">
-              <Button ButtonClass={"bg-blue-950 opacity-70 hover:opacity-100"} >Add</Button>
-              <Button ButtonClass={"bg-red-950 opacity-70 hover:opacity-100"} onClick={cancelHandler}>cancel</Button>
+              <Button ButtonClass={"bg-blue-950 opacity-70 hover:opacity-100"} textColor={"text-white"} >Add</Button>
+              <Button ButtonClass={"bg-white opacity-70 hover:opacity-100"} onClick={cancelHandler} textColor={"text-black"}>cancel</Button>
             </div>
           </form>
         </MyModal>
@@ -196,11 +243,23 @@ function App() {
 
 
             <div className="flex items-center gap-2 mt-6">
-              <Button ButtonClass={"bg-blue-950 opacity-70 hover:opacity-100"} >Add</Button>
-              <Button ButtonClass={"bg-red-950 opacity-70 hover:opacity-100"} onClick={cancelHandler}>cancel</Button>
+              <Button ButtonClass={"bg-blue-950 opacity-70 hover:opacity-100"} textColor={"text-white"} >Add</Button>
+              <Button ButtonClass={"bg-red-950 opacity-70 hover:opacity-100"} onClick={cancelHandler} textColor={"text-white"}>cancel</Button>
             </div>
           </form>
         </MyModal>
+
+
+        {/* Open Modal To Remove */}
+        <MyModal isOpen={isOpenToRemove} close={closeToRemove} title="Are You Sure You Want To Remove This Product From Your Store?">
+          <p>Deleting this product will remove it permanetly from your inventory. Any assoclated data sales history and other related information will also be removed. Please make sure this in the intended action</p>
+          <div className="flex items-center gap-2 mt-6">
+            <Button ButtonClass={"bg-red-950 opacity-70 hover:opacity-100"} textColor={"text-white"} onClick={removeHandler}>Yes, Remove</Button>
+            <Button ButtonClass={"bg-white text-black"} onClick={cancelToRemove} textColor={"text-black"}>cancel</Button>
+          </div>
+        </MyModal>
+        <Toaster />
+
       </div>
     </main>
   )

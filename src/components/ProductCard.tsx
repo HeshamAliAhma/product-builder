@@ -10,9 +10,10 @@ interface IProps {
   openToEdit:() => void
   setProductToEditIndex:(index:number) => void
   index:number,
+  isOpenToRemove:(value:boolean)=> void;
 }
 
-const ProductCard = ({product,setProductToEdit,openToEdit,setProductToEditIndex,index}:IProps) => {
+const ProductCard = ({product,setProductToEdit,openToEdit,setProductToEditIndex,index,isOpenToRemove}:IProps) => {
   const {title, description,price,imageUrl,colors,category} = product
 
   // ------------- Render Colors ---------------
@@ -24,6 +25,7 @@ const ProductCard = ({product,setProductToEdit,openToEdit,setProductToEditIndex,
     setProductToEdit(product)
     openToEdit();
     setProductToEditIndex(index);
+    
   }
 
   return (
@@ -34,15 +36,21 @@ const ProductCard = ({product,setProductToEdit,openToEdit,setProductToEditIndex,
         <h1 className="font-bold text-xl my-2">{trimText(title,25)}</h1>
         <p>{trimText(description,70)}</p>
         <div className="flex gap-2 my-3">
-          {RenderColorsList}
+
+          {colors ? RenderColorsList : (
+            <h1>
+              there is no colors
+            </h1>
+          )} 
+        
         </div>
         <div className="flex items-center justify-between">
           <span className="font-bold text-xl text-indigo-600">${price}</span>
           <Image ImageUrl={category.imageUrl} ImageName={category.name} ImageClass={"rounded-full w-10 h-10 "}/>
         </div>
         <div className="flex items-center justify-between gap-3 mt-3">
-          <Button ButtonClass={"bg-blue-600"} onClick={HandlerEdit}>EDIT</Button>
-          <Button ButtonClass={"bg-red-600"} >DELETE</Button>
+          <Button ButtonClass={"bg-blue-600"} onClick={HandlerEdit} textColor={"text-white"}>EDIT</Button>
+          <Button ButtonClass={"bg-red-600"} onClick={() => isOpenToRemove(true)} textColor={"text-white"}>DELETE</Button>
         </div>
     </div>
   )
