@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 import Select from "./components/ui/Select"
 import { TProductName } from "./components/type"
 import toast, { Toaster } from 'react-hot-toast';
+import LandingPage from "./components/landing"
 
 
 function App() {
@@ -56,7 +57,7 @@ function App() {
       [name]: ""
     })
   }
-  
+
   const HandlerEdit = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target
     setProductToEdit({
@@ -201,10 +202,10 @@ function App() {
 
   return (
     <main className="relative">
-      <div className="container">
-        {/* <div className={`${isOpen || isOpenToEdit ? "transition-all backdrop-blur-sm absolute top-0 left-0 w-full h-full" : ""}`}></div> */}
-        <Button ButtonClass={"bg-blue-600"} onClick={open} textColor={"text-white"}>Add</Button>
-        <div className="rounded-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-4 p-2 mt-2">
+      <LandingPage />
+      <div className="container p-4">
+        <Button width={"w-fit"} ButtonClass={"bg-blue-600 px-12 py-4"} onClick={open} textColor={"text-white"}>Add</Button>
+        <div className="rounded-md grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2 mt-2">
           {RenderProductList}
         </div>
 
